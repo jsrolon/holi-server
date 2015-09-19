@@ -44,20 +44,20 @@ def listenUDP():
     while 1:
         message, clientAddress = udpSocket.recvfrom(2048)
         msg = message.decode("utf-8")
-        print(str(datetime.datetime.now()) + " :: UDP :: " + msg.replace(";", "\t"))
-        print("UDP;" + msg, file=of)
+        print(str(datetime.datetime.now()) + " :: " + clientAddress[0] + " :: UDP :: " + msg.replace(";", "\t"))
+        print("UDP;" + clientAddress[0] + ";" + msg, file=of)
 
 
 def listenTCP():
     tcpSocket.listen(0)
     logging.info("TCP socket listening")
     while 1:
-        connectionSocket, addr = tcpSocket.accept()
+        connectionSocket, clientAddress = tcpSocket.accept()
         message = connectionSocket.recv(2048)
         connectionSocket.close()
         msg = message.decode("utf-8")
-        print(str(datetime.datetime.now()) + " :: TCP :: " + msg.replace(";", "\t"))
-        print("TCP;" + msg, file=of)
+        print(str(datetime.datetime.now()) + " :: " + clientAddress[0]  + " :: TCP :: " + msg.replace(";", "\t"))
+        print("TCP;" + clientAddress[0] + ";"  + msg, file=of)
 
 try:
     # create daemon threads so that the keyboard interrupt is handled
