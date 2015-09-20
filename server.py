@@ -39,13 +39,16 @@ def closeServer():
     print("Done")
 
 # Functions
+def reportMessage(protocol, msg, clientAddress):
+    print(str(datetime.datetime.now()) + " :: " + clientAddress[0] + " :: " + protocol + " :: " + msg.replace(";", "\t"))
+    print(protocol + ";" + clientAddress[0] + ";" + msg, file=of)
+
 def listenUDP():
     logging.info("UDP socket listening")
     while 1:
         message, clientAddress = udpSocket.recvfrom(2048)
         msg = message.decode("utf-8")
-        print(str(datetime.datetime.now()) + " :: " + clientAddress[0] + " :: UDP :: " + msg.replace(";", "\t"))
-        print("UDP;" + clientAddress[0] + ";" + msg, file=of)
+        threading.Thread(target=reportMessage, args=("UDP", msg, clientAddress)).start()
 
 
 def listenTCP():
@@ -56,8 +59,8 @@ def listenTCP():
         message = connectionSocket.recv(2048)
         connectionSocket.close()
         msg = message.decode("utf-8")
-        print(str(datetime.datetime.now()) + " :: " + clientAddress[0]  + " :: TCP :: " + msg.replace(";", "\t"))
-        print("TCP;" + clientAddress[0] + ";"  + msg, file=of)
+        threading.Thread(target=reportMessage, args=("TCP", msg, clientAddress)).start()
+        
 
 try:
     # create daemon threads so that the keyboard interrupt is handled
